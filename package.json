@@ -1,0 +1,15 @@
+{
+  "name": "web-scraper",
+  "version": "1.0.0",
+  "description": "A custom web scraper based on the tutorial at https://www.smashingmagazine.com/2015/04/web-scraping-with-nodejs/",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Tommy McGahee",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "^0.22.0",
+    "request": "^2.79.0"
+  }
+}
