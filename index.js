@@ -1,5 +1,6 @@
 var request    = require('request'),
-    cheerio    = require('cheerio');
+    cheerio    = require('cheerio'),
+    fs         = require('fs');
 
 const http     = require('http');
 const hostname = '127.0.0.1';
@@ -14,11 +15,11 @@ const server   = http.createServer((req, res) => {
           if (!error && response.statusCode == 200) {
               var $    = cheerio.load(html),
                   jobs = [];
-              $('li.job').each(function(i, element) {
-                  var title = $(this).children('h4').children('a').text(),
-                      desc  = $(this).children('.short_description').children('#field_for_short_description').children('.wysiwyg').children('p:last-child').text(),
-                      dept  = $(this).children('.department').children('#field_for_department').text(),
-                      loc   = $(this).children('.location').children('#field_for_location').text(),
+              $('li.job').each(function(i, el) {
+                  var title = $(this).find('h4 > a').text(),
+                      desc  = $(this).find('.short_description p:not(:first-child)').text(),
+                      dept  = $(this).find('.department span').text(),
+                      loc   = $(this).find('.location span').text(),
                       job   = {
                           title: title,
                           description: desc,
