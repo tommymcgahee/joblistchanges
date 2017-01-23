@@ -9,7 +9,9 @@
   "author": "Tommy McGahee",
   "license": "ISC",
   "dependencies": {
+    "array-difference": "0.0.1",
     "cheerio": "^0.22.0",
-    "request": "^2.79.0"
+    "request": "^2.79.0",
+    "underscore": "^1.8.3"
   }
 }
