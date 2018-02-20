@@ -1,11 +1,7 @@
-// TODO
-
-// write query to json file
-
 var request    = require('request'),
     cheerio    = require('cheerio'),
     fs         = require('fs'),
-    _          = require('underscore'),
+    _          = require('lodash'),
     url        = 'http://usg.hiretouch.com/browse-jobs/all-jobs?&start=1&per=100',
     jobFile,
     jobResponse;
@@ -13,25 +9,35 @@ var request    = require('request'),
 const http     = require('http');
 const hostname = '127.0.0.1';
 const port     = 3000;
-// const server   = http.createServer((req, res) => {
-//     res.statusCode = 200;
-//     res.setHeader('Content-Type', 'text/plain');
-//     res.write(JSON.stringify(jobResponse));
-//     res.end();
-// });
-// server.listen(port, hostname, () => {
-//     console.log(`Server running at http://${hostname}:${port}/`);
-// });
+const server   = http.createServer((req, res) => {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/plain');
+    res.write(JSON.stringify(jobResponse));
+    res.end();
+});
+server.listen(port, hostname, () => {
+    console.log(`Server running at http://${hostname}:${port}/`);
+});
 
-function areDifferentByProperty(o, n, prop) {
-    var oldJobs = o.map( function(x) {
-        return x[prop];
-    });
-    var newJobs = n.map( function(x) {
-        return x[prop];
+function areDifferentByProperty(jobFile, jobResponse) {
+    var newJobs = [];
+    var removedJobs = [];
+
+    _.forEach(jobResponse, function (n, key) {
+        if(!_.some(jobFile, {'job_id': n.job_id})) {
+          newJobs.push(n);
+        }
     });
 
-    // var diff    = _.difference(oldJobs, newJobs);
+    _.forEach(jobFile, function (n, key) {
+        if(!_.some(jobResponse, {'job_id': n.job_id})) {
+          removedJobs.push(n);
+        }
+    });
+
+    console.log('New jobs:', JSON.stringify(newJobs, undefined, 2));
+    console.log('========');
+    console.log('Removed jobs:', JSON.stringify(removedJobs, undefined, 2));
 }
 
 fs.readFile('jobstash.json', function(error, file) {                            // read previous jobs
@@ -60,7 +66,7 @@ fs.readFile('jobstash.json', function(error, file) {                            
                     jobs.push(job);
             });
             jobResponse    = jobs;
-            areDifferentByProperty(jobFile, jobResponse, 'job_id');
+            areDifferentByProperty(jobFile, jobResponse);
 
         } else {
             console.log('There was an error: ' + error);
